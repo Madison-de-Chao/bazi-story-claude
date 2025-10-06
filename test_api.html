@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API連接測試</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔍 虹靈御所 - API連接測試</h1>
+    
+    <div class="test-section">
+        <h2>測試 1: 檢查前端表單數據收集</h2>
+        <button onclick="testFormDataCollection()">測試表單數據</button>
+        <div id="form-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>測試 2: 檢查API請求格式</h2>
+        <button onclick="testApiRequestFormat()">測試請求格式</button>
+        <div id="request-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>測試 3: 實際API調用（目標案例: 1981-09-18 10:40）</h2>
+        <button onclick="testActualApiCall()">測試API連接</button>
+        <div id="api-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>測試 4: 數據處理與顯示</h2>
+        <button onclick="testDataProcessing()">測試數據處理</button>
+        <div id="processing-result" class="result"></div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script>
+        // 測試表單數據收集
+        function testFormDataCollection() {
+            const resultDiv = document.getElementById('form-result');
+            resultDiv.className = 'result info';
+            
+            const testInput = {
+                name: '測試用戶',
+                gender: 'male',
+                date: '1981-09-18',
+                time: '10:40',
+                ziStrategy: 'split',
+                useTst: false
+            };
+            
+            // 模擬表單數據處理
+            const date = new Date(testInput.date);
+            const [hour, minute] = testInput.time.split(':').map(Number);
+            
+            const processedInput = {
+                name: testInput.name,
+                gender: testInput.gender,
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate(),
+                hour,
+                minute,
+                ziStrategy: testInput.ziStrategy,
+                useTst: testInput.useTst
+            };
+            
+            resultDiv.textContent = '✅ 表單數據收集正確:\n' + JSON.stringify(processedInput, null, 2);
+            resultDiv.className = 'result success';
+        }
+        
+        // 測試API請求格式
+        function testApiRequestFormat() {
+            const resultDiv = document.getElementById('request-result');
+            resultDiv.className = 'result info';
+            
+            const input = {
+                year: 1981,
+                month: 9,
+                day: 18,
+                hour: 10,
+                minute: 40,
+                useTst: false
+            };
+            
+            // 構造API請求（根據 app.js 中的格式）
+            const requestData = {
+                datetime_local: `${input.year}-${String(input.month).padStart(2,'0')}-${String(input.day).padStart(2,'0')}T${String(input.hour).padStart(2,'0')}:${String(input.minute).padStart(2,'0')}:00`,
+                timezone: 'Asia/Taipei',
+                longitude: 120.0,
+                use_true_solar_time: input.useTst || false
+            };
+            
+            resultDiv.textContent = '✅ API請求格式正確:\n' + JSON.stringify(requestData, null, 2);
+            resultDiv.className = 'result success';
+        }
+        
+        // 測試實際API調用
+        async function testActualApiCall() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ 正在調用API...';
+            
+            const config = HongLingConfig;
+            const API_BASE_URL = config.api.baseUrl;
+            const API_ENDPOINT = config.api.endpoint;
+            
+            const requestData = {
+                datetime_local: '1981-09-18T10:40:00',
+                timezone: 'Asia/Taipei',
+                longitude: 120.0,
+                use_true_solar_time: false
+            };
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                
+                const response = await fetch(`${API_BASE_URL}${API_ENDPOINT}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(requestData),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP錯誤: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // 檢查返回的四柱數據
+                const pillars = data.four_pillars;
+                let result = '✅ API連接成功!\n\n';
+                result += `API端點: ${API_BASE_URL}${API_ENDPOINT}\n\n`;
+                result += '四柱數據:\n';
+                result += `年柱: ${pillars.year.pillar}\n`;
+                result += `月柱: ${pillars.month.pillar}\n`;
+                result += `日柱: ${pillars.day.pillar} (預期: 己亥)\n`;
+                result += `時柱: ${pillars.hour.pillar} (預期: 己巳)\n\n`;
+                
+                // 驗證目標案例
+                if (pillars.day.pillar === '己亥' && pillars.hour.pillar === '己巳') {
+                    result += '🎯 驗證通過: 日柱和時柱與目標案例匹配!\n';
+                } else {
+                    result += '⚠️ 驗證警告: 結果與預期不符\n';
+                }
+                
+                result += '\n完整響應:\n' + JSON.stringify(data, null, 2);
+                
+                resultDiv.textContent = result;
+                resultDiv.className = 'result success';
+                
+            } catch (error) {
+                let errorMsg = '❌ API調用失敗:\n\n';
+                errorMsg += `錯誤類型: ${error.name}\n`;
+                errorMsg += `錯誤訊息: ${error.message}\n\n`;
+                
+                if (error.name === 'AbortError') {
+                    errorMsg += '原因: 請求超時 (>8秒)\n';
+                } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                    errorMsg += '原因: 網絡連接錯誤，可能是CORS問題或API離線\n';
+                }
+                
+                errorMsg += '\n建議:\n';
+                errorMsg += '1. 檢查API端點是否正確\n';
+                errorMsg += '2. 確認API服務是否在線\n';
+                errorMsg += '3. 檢查瀏覽器控制台的網絡選項卡\n';
+                
+                resultDiv.textContent = errorMsg;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 測試數據處理
+        function testDataProcessing() {
+            const resultDiv = document.getElementById('processing-result');
+            resultDiv.className = 'result info';
+            
+            const mockApiResponse = {
+                four_pillars: {
+                    year: { gan: '辛', zhi: '酉', pillar: '辛酉' },
+                    month: { gan: '丁', zhi: '酉', pillar: '丁酉' },
+                    day: { gan: '己', zhi: '亥', pillar: '己亥' },
+                    hour: { gan: '己', zhi: '巳', pillar: '己巳' }
+                },
+                five_elements_stats: {
+                    木: 0.5,
+                    火: 2.0,
+                    土: 2.0,
+                    金: 4.0,
+                    水: 2.5
+                },
+                spirits: [
+                    { name: '天乙貴人', anchor_basis: '測試', rule_ref: '測試', why_matched: '測試' }
+                ]
+            };
+            
+            // 模擬數據處理
+            const pillars = mockApiResponse.four_pillars;
+            const fiveElements = mockApiResponse.five_elements_stats;
+            const spirits = mockApiResponse.spirits;
+            
+            let result = '✅ 數據處理正確:\n\n';
+            result += '四柱處理:\n';
+            result += `年柱: ${pillars.year.pillar}\n`;
+            result += `月柱: ${pillars.month.pillar}\n`;
+            result += `日柱: ${pillars.day.pillar}\n`;
+            result += `時柱: ${pillars.hour.pillar}\n\n`;
+            
+            result += '五行統計:\n';
+            Object.entries(fiveElements).forEach(([element, value]) => {
+                result += `${element}: ${value}\n`;
+            });
+            
+            result += `\n神煞數量: ${spirits.length}個\n`;
+            
+            resultDiv.textContent = result;
+            resultDiv.className = 'result success';
+        }
+    </script>
+</body>
+</html>
