@@ -118,6 +118,7 @@ class HongLingBaziSystem {
         };
         
         console.log('🌐 API請求:', requestData);
+        console.log(`📡 API端點: ${this.API_BASE_URL}${this.API_ENDPOINT}`);
         
         try {
             const controller = new AbortController();
@@ -141,6 +142,7 @@ class HongLingBaziSystem {
             
             const data = await response.json();
             console.log('✅ API響應成功:', data);
+            console.log('📊 四柱數據:', data.four_pillars);
             
             this.apiStatus = 'online';
             this.updateApiStatus('🌐 API線上模式', 'api-status-online');
@@ -149,6 +151,8 @@ class HongLingBaziSystem {
             
         } catch (error) {
             console.error('❌ API調用失敗:', error);
+            console.log(`⚠️ 錯誤類型: ${error.name}`);
+            console.log(`⚠️ 錯誤訊息: ${error.message}`);
             
             this.apiStatus = 'offline';
             this.updateApiStatus('🔧 Demo模式 (API離線)', 'api-status-offline');
@@ -621,6 +625,7 @@ class HongLingBaziSystem {
 class BaziApp {
     constructor() {
         this.calculator = new HongLingBaziSystem();
+        this.config = typeof HongLingConfig !== 'undefined' ? HongLingConfig : this.calculator.config;
         this.elementsChart = null;
         this.currentResult = null;
         this.initializeApp();
@@ -755,11 +760,15 @@ class BaziApp {
         
         const form = document.getElementById('bazi-form');
         if (!form) {
-            console.error('表單元素未找到');
+            console.error('❌ 表單元素未找到');
             return;
         }
         
         const formData = new FormData(form);
+        console.log('📋 原始表單數據:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}: ${value}`);
+        }
         
         const date = new Date(formData.get('date'));
         const time = formData.get('time');
@@ -782,7 +791,11 @@ class BaziApp {
             useTst: formData.has('useTst')
         };
         
-        console.log('📝 輸入數據:', input);
+        console.log('📝 處理後輸入數據:', input);
+        console.log(`📅 日期: ${input.year}-${input.month}-${input.day}`);
+        console.log(`⏰ 時間: ${input.hour}:${String(input.minute).padStart(2, '0')}`);
+        console.log(`⚙️ 子時策略: ${input.ziStrategy}`);
+        console.log(`🌐 TST修正: ${input.useTst ? '啟用' : '停用'}`);
         
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
@@ -1091,6 +1104,12 @@ class BaziApp {
         
         if (this.elementsChart) {
             this.elementsChart.destroy();
+        }
+        
+        // Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+            console.warn('⚠️ Chart.js 未載入，跳過圖表顯示');
+            return;
         }
         
         const colors = this.config.chart.colors;
