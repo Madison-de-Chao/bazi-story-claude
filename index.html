@@ -992,7 +992,13 @@
         }
 
         function displayTraditionalChart(apiResult) {
-            const { four_pillars, ten_gods, five_elements } = apiResult.data;
+            const { four_pillars, ten_gods, five_elements } = apiResult.data || {};
+            
+            // 檢查必要資料
+            if (!four_pillars || !ten_gods) {
+                console.error('API 資料不完整', apiResult);
+                return;
+            }
             
             // 四柱顯示
             const pillarsDisplay = document.getElementById('pillarsDisplay');
@@ -1023,9 +1029,13 @@
                 '水': '#4169e1'
             };
             
+            // API 回傳的結構是 five_elements_stats.elements_count 和 elements_percentage
+            const elementsCount = apiResult.data.five_elements_stats?.elements_count || {};
+            const elementsPercentage = apiResult.data.five_elements_stats?.elements_percentage || {};
+            
             elementsStats.innerHTML = elements.map(element => {
-                const count = five_elements[element] || 0;
-                const percentage = five_elements.total > 0 ? ((count / five_elements.total) * 100).toFixed(1) : 0;
+                const count = (elementsCount[element] || 0).toFixed(1);
+                const percentage = (elementsPercentage[element] || 0).toFixed(1);
                 return `
                     <div class="element-stat">
                         <div class="element-name" style="color: ${elementColors[element]}">${element}</div>
