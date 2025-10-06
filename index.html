@@ -1,1218 +1,332 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>虹靈御所八字軍團系統</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* 星空背景動畫 */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
-        }
-
-        .title {
-            font-size: 3rem;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffd700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-
-        .subtitle {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .version {
-            font-size: 1rem;
-            opacity: 0.7;
-            color: #4ecdc4;
-        }
-
-        /* 表單樣式 */
-        .form-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .form-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #4ecdc4;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: #ffd700;
-            font-weight: 500;
-        }
-
-        .form-input, .form-select {
-            padding: 12px 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .gender-options {
-            display: flex;
-            gap: 15px;
-        }
-
-        .gender-option {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .gender-option.selected {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.3);
-        }
-
-        .midnight-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .midnight-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .midnight-option.selected {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.3);
-        }
-
-        .midnight-option input[type="radio"] {
-            margin: 0;
-        }
-
-        .midnight-description {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .submit-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
-        }
-
-        .submit-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* 載入動畫 */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loading-content {
-            text-align: center;
-            color: white;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #4ecdc4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .loading-subtext {
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-
-        /* 結果展示 */
-        .result-section {
-            display: none;
-            margin-top: 30px;
-        }
-
-        .result-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .result-title {
-            font-size: 2rem;
-            color: #ffd700;
-            margin-bottom: 10px;
-        }
-
-        .result-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-
-        /* 標籤頁系統 */
-        .tabs-container {
-            margin-bottom: 30px;
-        }
-
-        .tabs-nav {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .tab-button.active {
-            background: rgba(78, 205, 196, 0.3);
-            border-color: #4ecdc4;
-            color: #4ecdc4;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* 傳統命盤 */
-        .traditional-chart {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .chart-title {
-            text-align: center;
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 20px;
-        }
-
-        .pillars-display {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .pillar-column {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .pillar-header {
-            font-size: 1rem;
-            color: #4ecdc4;
-            margin-bottom: 10px;
-        }
-
-        .pillar-stem {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffd700;
-            margin-bottom: 5px;
-        }
-
-        .pillar-branch {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ff6b6b;
-            margin-bottom: 10px;
-        }
-
-        .pillar-god {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-
-        .elements-stats {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .element-stat {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .element-name {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .element-count {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .element-percentage {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* 日誌系統 */
-        .logs-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .log-section {
-            margin-bottom: 20px;
-        }
-
-        .log-title {
-            font-size: 1.2rem;
-            color: #4ecdc4;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .log-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            border-left: 3px solid #4ecdc4;
-        }
-
-        .log-item.warning {
-            border-left-color: #ffd700;
-        }
-
-        .log-item.info {
-            border-left-color: #45b7d1;
-        }
-
-        .spirits-log {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-        }
-
-        .spirit-log-item {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.85rem;
-        }
-
-        /* AI故事區域 */
-        .story-container {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .story-title {
-            font-size: 1.5rem;
-            color: #ffd700;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .story-content {
-            line-height: 1.8;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .story-loading {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.7;
-        }
-
-        .story-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid #4ecdc4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        .legions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .legion-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            border-left: 5px solid;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-
-        .legion-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .legion-card.family { border-left-color: #ffd700; }
-        .legion-card.growth { border-left-color: #32cd32; }
-        .legion-card.self { border-left-color: #4169e1; }
-        .legion-card.future { border-left-color: #ff4500; }
-
-        .legion-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .legion-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        .legion-pillar {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-        }
-
-        .roles-section {
-            margin-bottom: 15px;
-        }
-
-        .role {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 12px;
-            border-radius: 20px;
-            margin: 5px;
-            font-size: 0.9rem;
-        }
-
-        .buffs-section {
-            margin-bottom: 15px;
-        }
-
-        .buff-title {
-            font-size: 1rem;
-            color: #32cd32;
-            margin-bottom: 5px;
-        }
-
-        .buff-list {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .sigils-section {
-            margin-top: 15px;
-        }
-
-        .sigil-title {
-            font-size: 1rem;
-            color: #ffd700;
-            margin-bottom: 8px;
-        }
-
-        .sigil {
-            display: inline-block;
-            background: rgba(255, 215, 0, 0.3);
-            padding: 5px 10px;
-            border-radius: 15px;
-            margin: 3px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-        }
-
-        .reset-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .reset-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-            .title {
-                font-size: 2rem;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .gender-options {
-                flex-direction: column;
-            }
-            
-            .legions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">虹靈御所 - 四軍團八字戰場</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
 </head>
 <body>
-    <!-- 星空背景 -->
-    <div class="stars" id="stars"></div>
-
-    <!-- 載入覆蓋層 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">星雲能量聚合中...</div>
-            <div class="loading-subtext">正在計算您的四柱八字，分析四時軍團，生成神煞兵符...</div>
+  <main class="container app">
+    <!-- 頂部品牌區域 -->
+    <header class="brand card">
+      <div class="card__body">
+        <div class="brand__top">
+          <h1 id="brand-name">虹靈御所</h1>
+          <span class="badge" id="version-badge">v8.2</span>
         </div>
-    </div>
-
-    <div class="container">
-        <!-- 標題區域 -->
-        <div class="header">
-            <h1 class="title">虹靈御所</h1>
-            <p class="subtitle">八字人生兵法系統</p>
-            <p class="version">v8.1 · 精準節氣 · 查表計算 · 可追溯日誌</p>
+        <p class="brand__subtitle" id="brand-subtitle">人生不是宿命，是軍團戰場</p>
+        <div class="brand__status">
+          <span class="status status--info" id="epoch-info">EPOCH基準：1985-09-22甲子日</span>
+          <span id="api-status" class="status status--info">API整合模式</span>
         </div>
+      </div>
+    </header>
 
-        <!-- 表單區域 -->
-        <div class="form-section" id="formSection">
-            <h2 class="form-title">⚔️ 軍團召喚儀式</h2>
-            <p style="margin-bottom: 20px; opacity: 0.8;">請提供您的基本資訊，啟動四時軍團分析</p>
+    <!-- 輸入面板 -->
+    <section class="card">
+      <div class="card__header">
+        <h2>🎮 角色創建面板</h2>
+        <p class="text-secondary">輸入生日時間，開啟你的軍團戰場</p>
+      </div>
+      <div class="card__body">
+        <form id="bazi-form" class="form-grid">
+          <div class="form-group">
+            <label for="name" class="form-label">角色名稱</label>
+            <input id="name" name="name" class="form-control" type="text" value="" placeholder="請輸入名稱" />
+          </div>
+          <div class="form-group">
+            <label for="gender" class="form-label">性別</label>
+            <select id="gender" name="gender" class="form-control">
+              <option value="male">男性 ♂</option>
+              <option value="female">女性 ♀</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="date" class="form-label">出生日期</label>
+            <input id="date" name="date" class="form-control" type="date" value="" required />
+          </div>
+          <div class="form-group">
+            <label for="time" class="form-label">出生時間</label>
+            <input id="time" name="time" class="form-control" type="time" value="" required />
+          </div>
 
-            <form id="baziForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">姓名</label>
-                        <input type="text" class="form-input" id="name" placeholder="請輸入您的姓名" required>
-                    </div>
+          <div class="form-group form-group--full">
+            <label class="form-label">
+              <input id="use-tst" name="useTst" type="checkbox" />
+              <span id="tst-label">啟用TST真太陽時修正 (經度120.0°E)</span>
+            </label>
+            <small class="text-secondary">TST修正將根據地理位置調整時間，提供更準確的八字計算</small>
+          </div>
 
-                    <div class="form-group">
-                        <label class="form-label">性別</label>
-                        <div class="gender-options">
-                            <div class="gender-option" data-value="男">男</div>
-                            <div class="gender-option" data-value="女">女</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">出生日期</label>
-                        <input type="date" class="form-input" id="birthDate" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">出生時間</label>
-                        <input type="time" class="form-input" id="birthTime" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">子時換日策略</label>
-                    <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">
-                        子時 (23:00-00:59) 橫跨兩個曆日，需選擇計算方式
-                    </p>
-                    <div class="midnight-options">
-                        <div class="midnight-option selected" data-value="traditional">
-                            <input type="radio" name="midnightRule" value="traditional" checked>
-                            <div>
-                                <div>傳統派換日</div>
-                                <div class="midnight-description">23:00開始即為新日 (無子夜之分)</div>
-                            </div>
-                        </div>
-                        <div class="midnight-option" data-value="modern">
-                            <input type="radio" name="midnightRule" value="modern">
-                            <div>
-                                <div>現代派區分</div>
-                                <div class="midnight-description">晚子23:00-23:59當日，早子00:00-00:59翌日</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-button">
-                    ⚡ 開始命運分析
-                </button>
-            </form>
-        </div>
-
-        <!-- 結果區域 -->
-        <div class="result-section" id="resultSection">
-            <div class="result-header">
-                <h2 class="result-title">🏰 命運分析完成</h2>
-                <p class="result-subtitle" id="resultSubtitle"></p>
+          <fieldset class="form-group form-group--full">
+            <legend class="form-label">⚙️ 子時換日策略</legend>
+            <div class="options">
+              <label class="option">
+                <input type="radio" name="ziStrategy" value="early" />
+                <span>傳統策略 (23:00-00:59次日)</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="ziStrategy" value="late" />
+                <span>現代策略 (23:00-00:59當日)</span>
+              </label>
+              <label class="option">
+                <input type="radio" name="ziStrategy" value="split" checked />
+                <span>中分策略 (23:00-23:59當日，00:00-00:59次日)</span>
+              </label>
             </div>
-            
-            <!-- 標籤頁導航 -->
-            <div class="tabs-container">
-                <div class="tabs-nav">
-                    <button class="tab-button active" onclick="switchTab('traditional')">📊 傳統命盤</button>
-                    <button class="tab-button" onclick="switchTab('legions')">⚔️ 軍團戰報</button>
-                    <button class="tab-button" onclick="switchTab('story')">📖 AI軍團故事</button>
-                    <button class="tab-button" onclick="switchTab('logs')">📋 計算日誌</button>
-                </div>
+          </fieldset>
 
-                <!-- 傳統命盤標籤 -->
-                <div class="tab-content active" id="traditionalTab">
-                    <div class="traditional-chart">
-                        <h3 class="chart-title">八字命盤</h3>
-                        <div class="pillars-display" id="pillarsDisplay">
-                            <!-- 四柱顯示 -->
-                        </div>
-                        <div class="elements-stats" id="elementsStats">
-                            <!-- 五行統計 -->
-                        </div>
-                    </div>
-                </div>
+          <div class="actions form-group--full">
+            <button type="button" id="load-demo" class="btn btn--primary">📦 載入示例</button>
+            <button type="submit" class="btn btn--secondary">🚀 開始戰場分析</button>
+            <button type="button" id="test-target" class="btn btn--outline">🎯 目標測試</button>
+            <button type="button" id="test-zi" class="btn btn--outline">🌙 子時測試</button>
+            <button type="button" id="export-pdf" class="btn btn--outline hidden">📁 匯出PDF</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-                <!-- 軍團戰報標籤 -->
-                <div class="tab-content" id="legionsTab">
-                    <div class="legions-grid" id="legionsGrid">
-                        <!-- 軍團卡片將在這裡動態生成 -->
-                    </div>
-                </div>
+    <!-- 結果區域 -->
+    <section id="result-section" class="hidden">
+      <!-- 角色資訊 -->
+      <section class="card">
+        <div class="card__body profile">
+          <div class="avatar">👤</div>
+          <div>
+            <div class="profile__name" id="display-name"></div>
+            <div class="profile__meta">
+              <span id="display-gender" class="chip"></span>
+              <span id="display-birth" class="text-secondary"></span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <!-- AI軍團故事標籤 -->
-                <div class="tab-content" id="storyTab">
-                    <div class="story-container">
-                        <h3 class="story-title">🌟 您的軍團傳奇</h3>
-                        <div id="storyContent">
-                            <div class="story-loading">
-                                <div class="story-spinner"></div>
-                                <div>AI正在為您編織獨特的軍團故事...</div>
-                            </div>
-                        </div>
+      <!-- 四軍團卡牌 -->
+      <section class="card">
+        <div class="card__header">
+          <h2>🏛️ 四軍團戰場</h2>
+          <p class="text-secondary">點擊卡片翻轉查看背面詳情，再次點擊返回正面</p>
+        </div>
+        <div class="card__body">
+          <div class="grid">
+            <!-- 家族軍團 年柱 -->
+            <div class="legion-card family-legion" id="family-legion" tabindex="0" aria-label="家族軍團卡，點擊翻轉">
+              <div class="flip-inner">
+                <div class="card-face card-front">
+                  <div class="legion-header">
+                    <div class="legion-icon">🏰</div>
+                    <div class="legion-info">
+                      <div class="legion-title">家族軍團</div>
+                      <div class="legion-subtitle text-secondary">祖先的力量</div>
                     </div>
+                    <div class="legion-pillar" id="year-pillar"></div>
+                  </div>
+                  <div class="legion-body">
+                    <div class="element-display" id="year-elements"></div>
+                    <div class="legion-story" id="year-story"></div>
+                    <div class="buffs-container" id="year-buffs"></div>
+                  </div>
+                  <button class="evidence-toggle" data-pillar="year">🔍 查看證據鏈</button>
                 </div>
-
-                <!-- 計算日誌標籤 -->
-                <div class="tab-content" id="logsTab">
-                    <div class="logs-container" id="logsContainer">
-                        <!-- 日誌內容將在這裡動態生成 -->
-                    </div>
+                <div class="card-face card-back">
+                  <div class="back-header">家族兵團（年柱）背面</div>
+                  <ul class="back-list" id="family-back"></ul>
                 </div>
+              </div>
             </div>
 
-            <div style="text-align: center;">
-                <button class="reset-button" onclick="resetForm()">重新分析</button>
+            <!-- 成長軍團 月柱 -->
+            <div class="legion-card growth-legion" id="growth-legion" tabindex="0" aria-label="成長軍團卡，點擊翻轉">
+              <div class="flip-inner">
+                <div class="card-face card-front">
+                  <div class="legion-header">
+                    <div class="legion-icon">🌱</div>
+                    <div class="legion-info">
+                      <div class="legion-title">成長軍團</div>
+                      <div class="legion-subtitle text-secondary">學習的旅程</div>
+                    </div>
+                    <div class="legion-pillar" id="month-pillar"></div>
+                  </div>
+                  <div class="legion-body">
+                    <div class="element-display" id="month-elements"></div>
+                    <div class="legion-story" id="month-story"></div>
+                    <div class="buffs-container" id="month-buffs"></div>
+                  </div>
+                  <button class="evidence-toggle" data-pillar="month">🔍 查看證據鏈</button>
+                </div>
+                <div class="card-face card-back">
+                  <div class="back-header">成長兵團（月柱）背面</div>
+                  <ul class="back-list" id="growth-back"></ul>
+                </div>
+              </div>
             </div>
+
+            <!-- 自我軍團 日柱 -->
+            <div class="legion-card self-legion" id="self-legion" tabindex="0" aria-label="自我軍團卡，點擊翻轉">
+              <div class="flip-inner">
+                <div class="card-face card-front">
+                  <div class="legion-header">
+                    <div class="legion-icon">⭐</div>
+                    <div class="legion-info">
+                      <div class="legion-title">自我軍團</div>
+                      <div class="legion-subtitle text-secondary">核心力量</div>
+                    </div>
+                    <div class="legion-pillar" id="day-pillar"></div>
+                  </div>
+                  <div class="legion-body">
+                    <div class="element-display" id="day-elements"></div>
+                    <div class="legion-story" id="day-story"></div>
+                    <div class="buffs-container" id="day-buffs"></div>
+                  </div>
+                  <button class="evidence-toggle" data-pillar="day">🔍 查看證據鏈</button>
+                </div>
+                <div class="card-face card-back">
+                  <div class="back-header">本我兵團（日柱）背面</div>
+                  <ul class="back-list" id="self-back"></ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- 未來軍團 時柱 -->
+            <div class="legion-card future-legion" id="future-legion" tabindex="0" aria-label="未來軍團卡，點擊翻轉">
+              <div class="flip-inner">
+                <div class="card-face card-front">
+                  <div class="legion-header">
+                    <div class="legion-icon">🚀</div>
+                    <div class="legion-info">
+                      <div class="legion-title">未來軍團</div>
+                      <div class="legion-subtitle text-secondary">前進的方向</div>
+                    </div>
+                    <div class="legion-pillar" id="hour-pillar"></div>
+                  </div>
+                  <div class="legion-body">
+                    <div class="element-display" id="hour-elements"></div>
+                    <div class="legion-story" id="hour-story"></div>
+                    <div class="buffs-container" id="hour-buffs"></div>
+                  </div>
+                  <button class="evidence-toggle" data-pillar="hour">🔍 查看證據鏈</button>
+                </div>
+                <div class="card-face card-back">
+                  <div class="back-header">未來兵團（時柱）背面</div>
+                  <ul class="back-list" id="future-back"></ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-    </div>
+      </section>
 
-    <script>
-        // 故事版軍團轉換器
-        const HEAVENLY_STEMS_COMMANDERS = {
-            '甲': { name: '森林統帥', rpg_class: '先鋒者', buff: ['開拓進取', '勇往直前'], debuff: ['急躁冒進', '缺乏耐性'] },
-            '乙': { name: '花草軍師', rpg_class: '協調者', buff: ['靈活應變', '溫和包容'], debuff: ['優柔寡斷', '過度依賴'] },
-            '丙': { name: '烈日戰神', rpg_class: '激勵者', buff: ['熱情感召', '光明正大'], debuff: ['急躁易怒', '過度張揚'] },
-            '丁': { name: '燭光法師', rpg_class: '智慧者', buff: ['細膩洞察', '溫暖人心'], debuff: ['過度敏感', '情緒波動'] },
-            '戊': { name: '山岳守護', rpg_class: '防禦者', buff: ['穩定承擔', '厚德載物'], debuff: ['固執僵化', '變通不足'] },
-            '己': { name: '田園管家', rpg_class: '支援者', buff: ['細心照料', '默默奉獻'], debuff: ['過度操心', '自我懷疑'] },
-            '庚': { name: '鋼鐵騎士', rpg_class: '執行者', buff: ['果斷決策', '堅毅不屈'], debuff: ['剛硬無情', '缺乏彈性'] },
-            '辛': { name: '珠寶工匠', rpg_class: '精煉者', buff: ['精緻品味', '追求完美'], debuff: ['挑剔完美', '過度敏感'] },
-            '壬': { name: '江河船長', rpg_class: '流動顧問', buff: ['靈活創新', '包容萬物'], debuff: ['善變無定', '缺乏原則'] },
-            '癸': { name: '甘露使者', rpg_class: '滋養者', buff: ['溫柔包容', '潤物無聲'], debuff: ['過度依賴', '缺乏主見'] }
-        };
+      <!-- 戰場統計與驗證 -->
+      <section class="card">
+        <div class="card__header">
+          <h3>⚔️ 戰場統計</h3>
+          <div id="verification-badge" class="verification-badge"></div>
+        </div>
+        <div class="card__body stats-grid">
+          <div class="stat-card">
+            <h4>五行分佈 (v8.1權重法)</h4>
+            <div class="text-secondary">天干1.0 | 地支0.8 | 藏干0.6/0.4/0.3 | 月令×1.5</div>
+            <div class="chart-container" style="position: relative; height: 250px;">
+              <canvas id="elements-chart"></canvas>
+            </div>
+            <div id="elements-summary" class="elements-summary"></div>
+          </div>
+          <div class="stat-card">
+            <h4>精度驗證</h4>
+            <div id="verification-grid" class="verification-grid"></div>
+            <div id="tst-display" class="tst hidden">
+              <div class="tst__title">🌍 TST真太陽時修正</div>
+              <div class="tst__row"><span>經度修正:</span><strong id="longitude-correction"></strong></div>
+              <div class="tst__row"><span>時差方程:</span><strong id="equation-time"></strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        const EARTHLY_BRANCHES_STRATEGISTS = {
-            '子': { name: '智慧鼠師', buff: ['機敏謀略', '靈活變通'], debuff: ['過度算計', '缺乏信任'] },
-            '丑': { name: '忠犬守衛', buff: ['後勤補給', '忠誠可靠'], debuff: ['遲疑不決', '過度保守'] },
-            '寅': { name: '森林獵人', buff: ['先鋒衝陣', '勇猛無畏'], debuff: ['草率行事', '缺乏深思'] },
-            '卯': { name: '春兔信使', buff: ['靈活傳訊', '生機勃勃'], debuff: ['缺乏耐性', '三分鐘熱度'] },
-            '辰': { name: '龍族長老', buff: ['威嚴統御', '高瞻遠矚'], debuff: ['高傲孤立', '脫離實際'] },
-            '巳': { name: '智蛇謀士', buff: ['深謀遠慮', '洞察人心'], debuff: ['過度猜疑', '心機太重'] },
-            '午': { name: '烈馬先鋒', buff: ['衝鋒陷陣', '熱情奔放'], debuff: ['衝動魯莽', '缺乏持久'] },
-            '未': { name: '溫羊牧者', buff: ['和諧協調', '溫和善良'], debuff: ['優柔寡斷', '缺乏決斷'] },
-            '申': { name: '靈猴軍師', buff: ['機智變通', '創意無限'], debuff: ['三心二意', '不夠專注'] },
-            '酉': { name: '金雞報曉', buff: ['準時執行', '一絲不苟'], debuff: ['過度挑剔', '缺乏包容'] },
-            '戌': { name: '戰犬統領', buff: ['守護堡壘', '忠誠護主'], debuff: ['迂腐頑固', '缺乏變通'] },
-            '亥': { name: '野豬勇士', buff: ['勇猛直前', '純真善良'], debuff: ['缺乏策略', '容易受騙'] }
-        };
+      <!-- 神煞系統 -->
+      <section class="card">
+        <div class="card__header"><h3>⭐ 神煞系統</h3></div>
+        <div class="card__body">
+          <div id="spirits-grid" class="spirits-grid"></div>
+        </div>
+      </section>
 
-        const LEGION_TYPES = {
-            year: { name: '家族兵團', description: '血脈傳承，根基所在', cssClass: 'family', icon: '🏰' },
-            month: { name: '成長兵團', description: '學習歷程，能力養成', cssClass: 'growth', icon: '🌱' },
-            day: { name: '本我兵團', description: '核心自我，真實本性', cssClass: 'self', icon: '⭐' },
-            hour: { name: '未來兵團', description: '發展方向，潛能展現', cssClass: 'future', icon: '🚀' }
-        };
+      <!-- 系統資訊 -->
+      <section class="card">
+        <div class="card__header"><h3>系統資訊</h3></div>
+        <div class="card__body info-grid">
+          <div class="info-item"><span class="info-label">資料來源</span><span id="data-source" class="info-value"></span></div>
+          <div class="info-item"><span class="info-label">計算模式</span><span id="calc-mode" class="info-value"></span></div>
+          <div class="info-item"><span class="info-label">有效日期</span><span id="effective-date" class="info-value"></span></div>
+          <div class="info-item"><span class="info-label">計算基準</span><span id="epoch-base" class="info-value"></span></div>
+        </div>
+      </section>
 
-        // 初始化星空背景
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const starCount = 100;
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                starsContainer.appendChild(star);
-            }
-        }
+      <!-- 證據鏈模態框 -->
+      <div id="evidence-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="evidence-title">
+        <div class="modal__overlay"></div>
+        <div class="modal__content card">
+          <div class="card__header modal__header">
+            <h3 id="evidence-title"></h3>
+            <button class="modal-close btn btn--outline">關閉</button>
+          </div>
+          <div class="card__body" id="evidence-chain"></div>
+        </div>
+      </div>
 
-        // 表單事件處理
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-            
-            // 性別選擇
-            document.querySelectorAll('.gender-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
+      <!-- Debug日誌 -->
+      <section class="card">
+        <div class="card__header"><h3>🔧 Debug 日誌</h3></div>
+        <div class="card__body">
+          <pre id="debug-log" class="debug"></pre>
+        </div>
+      </section>
+    </section>
+  </main>
 
-            // 子時換日策略選擇
-            document.querySelectorAll('.midnight-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.midnight-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    this.querySelector('input[type="radio"]').checked = true;
-                });
-            });
-
-            // 表單提交
-            document.getElementById('baziForm').addEventListener('submit', handleFormSubmit);
-        });
-
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            
-            const formData = collectFormData();
-            if (!validateFormData(formData)) {
-                return;
-            }
-
-            showLoading();
-            
-            try {
-                const apiResult = await callBaziApi(formData);
-                const storyResult = convertToStoryLegions(apiResult);
-                displayResults(formData.name, storyResult, apiResult);
-            } catch (error) {
-                hideLoading();
-                alert('分析失敗：' + error.message);
-            }
-        }
-
-        function collectFormData() {
-            const selectedGender = document.querySelector('.gender-option.selected');
-            const selectedMidnight = document.querySelector('.midnight-option.selected input[type="radio"]');
-            
-            return {
-                name: document.getElementById('name').value,
-                gender: selectedGender ? selectedGender.dataset.value : '',
-                birthDate: document.getElementById('birthDate').value,
-                birthTime: document.getElementById('birthTime').value,
-                midnightRule: selectedMidnight ? selectedMidnight.value : 'traditional'
-            };
-        }
-
-        function validateFormData(data) {
-            if (!data.name || !data.gender || !data.birthDate || !data.birthTime) {
-                alert('請填寫所有必要資訊');
-                return false;
-            }
-            return true;
-        }
-
-        async function callBaziApi(formData) {
-            const requestData = {
-                datetime_local: `${formData.birthDate}T${formData.birthTime}:00`,
-                timezone: "Asia/Taipei",
-                longitude: 120.0,
-                use_true_solar_time: false
-            };
-
-            const response = await fetch('https://rainbow-sanctuary-bazu-production.up.railway.app/api/bazi/compute', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API錯誤: ${response.status}`);
-            }
-
-            return await response.json();
-        }
-
-        function convertToStoryLegions(apiResult) {
-            const { four_pillars, ten_gods, spirits } = apiResult.data;
-            
-            const legions = [
-                buildLegion('year', four_pillars.year, spirits),
-                buildLegion('month', four_pillars.month, spirits),
-                buildLegion('day', four_pillars.day, spirits),
-                buildLegion('hour', four_pillars.hour, spirits)
-            ];
-
-            return { 
-                legions, 
-                meta: { 
-                    pillar_string: `${four_pillars.year.stem}${four_pillars.year.branch} ${four_pillars.month.stem}${four_pillars.month.branch} ${four_pillars.day.stem}${four_pillars.day.branch} ${four_pillars.hour.stem}${four_pillars.hour.branch}`,
-                    ten_gods: ten_gods
-                } 
-            };
-        }
-
-        function buildLegion(pillarType, pillar, spirits) {
-            const legionInfo = LEGION_TYPES[pillarType];
-            const commander = HEAVENLY_STEMS_COMMANDERS[pillar.stem] || { name: '未知主將', rpg_class: '神秘者', buff: [], debuff: [] };
-            const strategist = EARTHLY_BRANCHES_STRATEGISTS[pillar.branch] || { name: '未知軍師', buff: [], debuff: [] };
-            
-            return {
-                type: legionInfo.name,
-                description: legionInfo.description,
-                cssClass: legionInfo.cssClass,
-                icon: legionInfo.icon,
-                pillar: { stem: pillar.stem, branch: pillar.branch },
-                commander: { 
-                    code: pillar.stem, 
-                    name: commander.name, 
-                    rpg_class: commander.rpg_class, 
-                    buff: commander.buff, 
-                    debuff: commander.debuff 
-                },
-                strategist: { 
-                    code: pillar.branch, 
-                    name: strategist.name, 
-                    buff: strategist.buff, 
-                    debuff: strategist.debuff 
-                },
-                sigils: spirits.slice(0, 3).map(spirit => ({ 
-                    name: spirit.name, 
-                    category: spirit.category 
-                }))
-            };
-        }
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
-
-        function displayResults(userName, storyResult, apiResult) {
-            hideLoading();
-            
-            document.getElementById('formSection').style.display = 'none';
-            document.getElementById('resultSection').style.display = 'block';
-            
-            document.getElementById('resultSubtitle').textContent = 
-                `${userName} 的命運分析 · 四柱：${storyResult.meta.pillar_string}`;
-            
-            // 顯示傳統命盤
-            displayTraditionalChart(apiResult);
-            
-            // 顯示軍團戰報
-            displayLegions(storyResult);
-            
-            // 顯示計算日誌
-            displayLogs(apiResult);
-            
-            // 生成AI故事
-            generateAIStory(userName, storyResult, apiResult);
-        }
-
-        function displayTraditionalChart(apiResult) {
-            const { four_pillars, ten_gods, five_elements } = apiResult.data;
-            
-            // 四柱顯示
-            const pillarsDisplay = document.getElementById('pillarsDisplay');
-            const pillars = [
-                { name: '年柱', pillar: four_pillars.year, god: ten_gods.year_stem },
-                { name: '月柱', pillar: four_pillars.month, god: ten_gods.month_stem },
-                { name: '日柱', pillar: four_pillars.day, god: '日主' },
-                { name: '時柱', pillar: four_pillars.hour, god: ten_gods.hour_stem }
-            ];
-            
-            pillarsDisplay.innerHTML = pillars.map(p => `
-                <div class="pillar-column">
-                    <div class="pillar-header">${p.name}</div>
-                    <div class="pillar-stem">${p.pillar.stem}</div>
-                    <div class="pillar-branch">${p.pillar.branch}</div>
-                    <div class="pillar-god">${p.god}</div>
-                </div>
-            `).join('');
-            
-            // 五行統計
-            const elementsStats = document.getElementById('elementsStats');
-            const elements = ['木', '火', '土', '金', '水'];
-            const elementColors = {
-                '木': '#32cd32',
-                '火': '#ff4500', 
-                '土': '#daa520',
-                '金': '#ffd700',
-                '水': '#4169e1'
-            };
-            
-            elementsStats.innerHTML = elements.map(element => {
-                const count = five_elements[element] || 0;
-                const percentage = five_elements.total > 0 ? ((count / five_elements.total) * 100).toFixed(1) : 0;
-                return `
-                    <div class="element-stat">
-                        <div class="element-name" style="color: ${elementColors[element]}">${element}</div>
-                        <div class="element-count" style="color: ${elementColors[element]}">${count}</div>
-                        <div class="element-percentage">${percentage}%</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function displayLegions(storyResult) {
-            const legionsGrid = document.getElementById('legionsGrid');
-            legionsGrid.innerHTML = storyResult.legions.map(legion => `
-                <div class="legion-card ${legion.cssClass}">
-                    <div class="legion-header">
-                        <span style="font-size: 1.5rem;">${legion.icon}</span>
-                        <div>
-                            <div class="legion-title">${legion.type}</div>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">${legion.description}</div>
-                        </div>
-                        <div class="legion-pillar">${legion.pillar.stem}${legion.pillar.branch}</div>
-                    </div>
-                    
-                    <div class="roles-section">
-                        <span class="role">👑 主將: ${legion.commander.name} (${legion.commander.rpg_class})</span>
-                        <span class="role">🎯 軍師: ${legion.strategist.name}</span>
-                    </div>
-                    
-                    <div class="buffs-section">
-                        <div class="buff-title">✨ 軍團優勢</div>
-                        <div class="buff-list">${[...legion.commander.buff, ...legion.strategist.buff].join(' · ')}</div>
-                    </div>
-                    
-                    ${legion.sigils.length > 0 ? `
-                    <div class="sigils-section">
-                        <div class="sigil-title">🎴 兵符卡</div>
-                        <div>${legion.sigils.map(sigil => `<span class="sigil">${sigil.name}</span>`).join('')}</div>
-                    </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-
-        function displayLogs(apiResult) {
-            const { four_pillars, spirits, solar_terms, calculation_logs } = apiResult.data;
-            const logsContainer = document.getElementById('logsContainer');
-            
-            logsContainer.innerHTML = `
-                <div class="log-section">
-                    <div class="log-title">🕐 時間計算</div>
-                    <div class="log-item info">輸入時間: ${apiResult.data.input_datetime || '未提供'}</div>
-                    <div class="log-item info">時區: ${apiResult.data.timezone || 'Asia/Taipei'}</div>
-                    <div class="log-item info">經度: ${apiResult.data.longitude || 120.0}°</div>
-                    <div class="log-item ${apiResult.data.use_true_solar_time ? 'warning' : 'info'}">
-                        真太陽時: ${apiResult.data.use_true_solar_time ? '已啟用' : '未啟用'}
-                    </div>
-                </div>
-
-                <div class="log-section">
-                    <div class="log-title">📅 節氣定位</div>
-                    <div class="log-item">當前節氣: ${solar_terms?.current || '未知'}</div>
-                    <div class="log-item">下個節氣: ${solar_terms?.next || '未知'}</div>
-                    <div class="log-item info">月柱計算基於節氣邊界，確保準確性</div>
-                </div>
-
-                <div class="log-section">
-                    <div class="log-title">🔢 四柱推算</div>
-                    <div class="log-item">年柱: ${four_pillars.year.stem}${four_pillars.year.branch} (${four_pillars.year.stem}天干 + ${four_pillars.year.branch}地支)</div>
-                    <div class="log-item">月柱: ${four_pillars.month.stem}${four_pillars.month.branch} (五虎遁查表)</div>
-                    <div class="log-item">日柱: ${four_pillars.day.stem}${four_pillars.day.branch} (甲子EPOCH基準)</div>
-                    <div class="log-item">時柱: ${four_pillars.hour.stem}${four_pillars.hour.branch} (五鼠遁查表)</div>
-                </div>
-
-                <div class="log-section">
-                    <div class="log-title">⭐ 神煞查詢</div>
-                    <div class="spirits-log">
-                        ${spirits.map(spirit => `
-                            <div class="spirit-log-item">
-                                <strong>${spirit.name}</strong> (${spirit.category})<br>
-                                <small>查表依據: ${spirit.pillar || '四柱綜合'}</small>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="log-section">
-                    <div class="log-title">✅ 驗證完成</div>
-                    <div class="log-item">四柱計算: ✓ 完成</div>
-                    <div class="log-item">十神分析: ✓ 完成</div>
-                    <div class="log-item">神煞查詢: ✓ 完成 (${spirits.length}個)</div>
-                    <div class="log-item">五行統計: ✓ 完成</div>
-                    <div class="log-item">納音查表: ✓ 完成</div>
-                </div>
-            `;
-        }
-
-        async function generateAIStory(userName, storyResult, apiResult) {
-            const storyContent = document.getElementById('storyContent');
-            
-            try {
-                // 構建AI提示詞
-                const prompt = buildStoryPrompt(userName, storyResult, apiResult);
-                
-                // 調用OpenAI API生成故事
-                const story = await callOpenAI(prompt);
-                
-                storyContent.innerHTML = `<div class="story-content">${story}</div>`;
-            } catch (error) {
-                storyContent.innerHTML = `
-                    <div class="story-content" style="color: #ff6b6b;">
-                        <p>抱歉，AI故事生成遇到問題：${error.message}</p>
-                        <p>但您的軍團分析已完成，請查看其他標籤頁的詳細資訊。</p>
-                    </div>
-                `;
-            }
-        }
-
-        function buildStoryPrompt(userName, storyResult, apiResult) {
-            const { four_pillars, spirits } = apiResult.data;
-            const legions = storyResult.legions;
-            
-            return `請為${userName}創作一個獨特的八字軍團故事，基於以下資訊：
-
-四柱：${storyResult.meta.pillar_string}
-
-四時軍團：
-${legions.map(legion => `- ${legion.type}：由${legion.commander.name}(${legion.commander.rpg_class})統領，${legion.strategist.name}輔佐`).join('\n')}
-
-神煞兵符：${spirits.map(s => s.name).join('、')}
-
-請創作一個800字左右的故事，包含：
-1. 開場：描述${userName}的命運軍團覺醒
-2. 四時軍團的特色和互動
-3. 神煞兵符的神秘力量
-4. 人生建議和未來展望
-
-風格要求：
-- 奇幻RPG風格，充滿想像力
-- 正面積極，給人希望
-- 結合中國傳統文化元素
-- 語言優美，富有詩意`;
-        }
-
-        async function callOpenAI(prompt) {
-            // 模擬AI故事生成（實際部署時需要後端API支援）
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(`
-                        <p>在虹靈御所的星空之下，${document.getElementById('name').value}的命運軍團正式覺醒...</p>
-                        
-                        <p>🏰 <strong>家族兵團</strong>率先響應召喚，${document.querySelector('#legionsGrid .family .legion-title') ? '由經驗豐富的統領帶領' : ''}，承載著血脈傳承的使命，為整個軍團提供穩固的根基。</p>
-                        
-                        <p>🌱 <strong>成長兵團</strong>緊隨其後，充滿朝氣與活力，代表著不斷學習與進步的精神，為軍團注入源源不絕的創新力量。</p>
-                        
-                        <p>⭐ <strong>本我兵團</strong>展現真實的內在力量，這是最核心的戰鬥單位，體現著純粹的自我本質與獨特的個人魅力。</p>
-                        
-                        <p>🚀 <strong>未來兵團</strong>指向無限可能，如同夜空中最亮的星，照亮前進的道路，預示著美好的發展前景。</p>
-                        
-                        <p>四時軍團在神煞兵符的加持下，形成了完美的戰略平衡。每一個兵符都蘊含著古老的智慧，為軍團提供獨特的能力加成。</p>
-                        
-                        <p>在這個充滿挑戰與機遇的人生戰場上，您的軍團將以智慧為劍，以勇氣為盾，書寫屬於自己的傳奇篇章。記住，真正的力量來自於內心的平衡與和諧，願您的軍團永遠光明璀璨！</p>
-                    `);
-                }, 3000);
-            });
-        }
-
-        // 標籤頁切換功能
-        function switchTab(tabName) {
-            // 移除所有active類
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // 添加active類到選中的標籤
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.add('active');
-        }
-
-        function resetForm() {
-            document.getElementById('formSection').style.display = 'block';
-            document.getElementById('resultSection').style.display = 'none';
-            document.getElementById('baziForm').reset();
-            
-            // 重置選擇狀態
-            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelectorAll('.midnight-option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelector('.midnight-option[data-value="traditional"]').classList.add('selected');
-        }
-    </script>
+  <script src="app.js"></script>
+  <script>
+    // 初始化頁面配置
+    if (typeof HongLingConfig !== 'undefined') {
+      const config = HongLingConfig;
+      
+      // 更新頁面標題
+      const pageTitle = document.getElementById('page-title');
+      if (pageTitle) {
+        pageTitle.textContent = `${config.system.name} v${config.system.version} - ${config.system.description}`;
+      }
+      
+      // 更新品牌資訊
+      const brandName = document.getElementById('brand-name');
+      const versionBadge = document.getElementById('version-badge');
+      const brandSubtitle = document.getElementById('brand-subtitle');
+      const epochInfo = document.getElementById('epoch-info');
+      
+      if (brandName) brandName.textContent = config.system.name;
+      if (versionBadge) versionBadge.textContent = `v${config.system.version}`;
+      if (brandSubtitle) brandSubtitle.textContent = config.system.subtitle;
+      if (epochInfo) epochInfo.textContent = `EPOCH基準：${config.calculation.epochBase.fullText}`;
+      
+      // 更新 TST 標籤
+      const tstLabel = document.getElementById('tst-label');
+      if (tstLabel) {
+        tstLabel.textContent = `啟用TST真太陽時修正 (經度${config.calculation.defaultLongitude.toFixed(1)}°E)`;
+      }
+      
+      // 更新系統資訊中的計算基準
+      const epochBase = document.getElementById('epoch-base');
+      if (epochBase) {
+        epochBase.textContent = config.calculation.epochBase.fullText;
+      }
+    }
+  </script>
 </body>
 </html>
