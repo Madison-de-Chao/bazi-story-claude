@@ -1100,9 +1100,6 @@
                         <div class="elements-stats" id="elementsStats">
                             <!-- 五行統計 -->
                         </div>
-                        <div id="yinYangBalance">
-                            <!-- 陰陽平衡度 -->
-                        </div>
                     </div>
                 </div>
 
@@ -1377,21 +1374,14 @@
                 { name: '時柱', pillar: four_pillars.hour, god: ten_gods.hour_stem }
             ];
             
-            pillarsDisplay.innerHTML = pillars.map(p => {
-                const nayin = getNayin(p.pillar.stem, p.pillar.branch);
-                const hiddenStems = getHiddenStems(p.pillar.branch);
-                const hiddenStemsText = Object.values(hiddenStems).map(h => h.stem).join('·');
-                
-                return `
+            pillarsDisplay.innerHTML = pillars.map(p => `
                 <div class="pillar-column">
                     <div class="pillar-header">${p.name}</div>
                     <div class="pillar-stem">${p.pillar.stem}</div>
                     <div class="pillar-branch">${p.pillar.branch}</div>
                     <div class="pillar-god">${p.god}</div>
-                    <div class="pillar-nayin" style="font-size: 0.8rem; color: #ffd700; margin-top: 5px;">🎯 ${nayin.nayin}</div>
-                    <div class="pillar-hidden" style="font-size: 0.75rem; opacity: 0.7; margin-top: 3px;">藏干: ${hiddenStemsText}</div>
                 </div>
-            `}).join('');
+            `).join('');
             
             // 五行統計
             const elementsStats = document.getElementById('elementsStats');
@@ -1419,38 +1409,11 @@
                     </div>
                 `;
             }).join('');
-            
-            // 陰陽平衡度
-            const yinYangBalance = calculateYinYangBalance(four_pillars);
-            const yinYangDisplay = document.getElementById('yinYangBalance');
-            if (yinYangDisplay) {
-                yinYangDisplay.innerHTML = `
-                    <div style="display: flex; gap: 20px; align-items: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
-                        <div style="flex: 1;">
-                            <div style="font-size: 0.9rem; color: #ffd700; margin-bottom: 10px; font-weight: bold;">☀️ 陰陽平衡度</div>
-                            <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-                                <div style="flex: ${yinYangBalance.yang}; background: linear-gradient(90deg, #ff6b6b, #ffd700); height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold;">
-                                    陽 ${yinYangBalance.yang}
-                                </div>
-                                <div style="flex: ${yinYangBalance.yin}; background: linear-gradient(90deg, #4169e1, #9370db); height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold;">
-                                    陰 ${yinYangBalance.yin}
-                                </div>
-                            </div>
-                            <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;">
-                                陽 ${yinYangBalance.yang_percentage}% · 陰 ${yinYangBalance.yin_percentage}% · ${yinYangBalance.balance_status}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
         }
 
         function displayLegions(storyResult) {
             const legionsGrid = document.getElementById('legionsGrid');
-            legionsGrid.innerHTML = storyResult.legions.map(legion => {
-                const nayin = getNayin(legion.pillar.stem, legion.pillar.branch);
-                
-                return `
+            legionsGrid.innerHTML = storyResult.legions.map(legion => `
                 <div class="legion-card ${legion.cssClass}">
                     <div class="legion-header">
                         <span style="font-size: 1.5rem;">${legion.icon}</span>
@@ -1466,13 +1429,6 @@
                         <span class="role">🎯 軍師: ${legion.strategist.name}</span>
                     </div>
                     
-                    <div class="nayin-battlefield" style="margin: 15px 0; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 8px; border-left: 3px solid #ffd700;">
-                        <div style="font-size: 0.85rem; color: #ffd700; font-weight: bold; margin-bottom: 5px;">🎯 納音戰場</div>
-                        <div style="font-size: 0.95rem; font-weight: bold; color: #fff;">${nayin.nayin}</div>
-                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">${nayin.description}</div>
-                        <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 5px; font-style: italic;">${nayin.life_theme}</div>
-                    </div>
-                    
                     <div class="buffs-section">
                         <div class="buff-title">✨ 軍團優勢</div>
                         <div class="buff-list">${[...legion.commander.buff, ...legion.strategist.buff].join(' · ')}</div>
@@ -1485,7 +1441,7 @@
                     </div>
                     ` : ''}
                 </div>
-            `}).join('');
+            `).join('');
         }
 
         function displayLogs(apiResult) {
