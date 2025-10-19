@@ -13,13 +13,21 @@
         
         body {
             font-family: 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: linear-gradient(135deg, #0a0a1e, #1a0a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* 星空背景動畫 */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 增強星空背景動畫 */
         .stars {
             position: fixed;
             top: 0;
@@ -32,16 +40,49 @@
 
         .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
             background: white;
             border-radius: 50%;
-            animation: twinkle 3s infinite;
+            animation: twinkle 3s infinite, float 20s infinite;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 1);
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 粒子系統 */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0; }
+            50% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 1; }
         }
 
         .container {
@@ -56,21 +97,48 @@
             text-align: center;
             margin-bottom: 40px;
             padding: 20px 0;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .title {
             font-size: 3rem;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffd700);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffd700, #ff6b6b);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 10px;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: rainbowFlow 5s ease infinite;
+            filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.5));
+        }
+
+        @keyframes rainbowFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .subtitle {
             font-size: 1.3rem;
             opacity: 0.9;
             margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(78, 205, 196, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(78, 205, 196, 1), 0 0 30px rgba(78, 205, 196, 0.5); }
         }
 
         .version {
@@ -79,14 +147,28 @@
             color: #4ecdc4;
         }
 
-        /* 表單樣式 */
+        /* 表單樣式增強 */
         .form-section {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        inset 0 0 20px rgba(78, 205, 196, 0.1);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-title {
@@ -96,6 +178,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
         }
 
         .form-grid {
@@ -115,13 +198,14 @@
             margin-bottom: 8px;
             color: #ffd700;
             font-weight: 500;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
         }
 
         .form-input, .form-select {
             padding: 12px 15px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
             font-size: 1rem;
             transition: all 0.3s ease;
@@ -130,7 +214,9 @@
         .form-input:focus, .form-select:focus {
             outline: none;
             border-color: #4ecdc4;
-            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5),
+                        inset 0 0 10px rgba(78, 205, 196, 0.2);
+            transform: translateY(-2px);
         }
 
         .form-input::placeholder {
@@ -147,16 +233,22 @@
             padding: 12px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s ease;
         }
 
+        .gender-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
         .gender-option.selected {
             border-color: #4ecdc4;
             background: rgba(78, 205, 196, 0.3);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
         }
 
         .midnight-options {
@@ -172,14 +264,20 @@
             padding: 15px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .midnight-option:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
         }
 
         .midnight-option.selected {
             border-color: #4ecdc4;
             background: rgba(78, 205, 196, 0.3);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
         }
 
         .midnight-option input[type="radio"] {
@@ -192,10 +290,12 @@
             margin-top: 5px;
         }
 
+        /* 提交按鈕增強 */
         .submit-button {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 200% 200%;
             border: none;
             border-radius: 15px;
             color: white;
@@ -204,11 +304,41 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(255, 107, 107, 0.4);
+            animation: buttonGradient 3s ease infinite;
+        }
+
+        @keyframes buttonGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .submit-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(255, 107, 107, 0.6);
+        }
+
+        .submit-button:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: buttonShine 3s infinite;
+        }
+
+        @keyframes buttonShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
         .submit-button:disabled {
@@ -217,33 +347,72 @@
             transform: none;
         }
 
-        /* 載入動畫 */
+        /* 載入動畫增強 */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: radial-gradient(circle at center, rgba(10, 10, 30, 0.95), rgba(0, 0, 0, 0.98));
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .loading-content {
             text-align: center;
             color: white;
+            position: relative;
+        }
+
+        /* 星雲粒子效果 */
+        .nebula-container {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .nebula-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: nebulaFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1);
+                opacity: 0.8;
+            }
         }
 
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #4ecdc4;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #4ecdc4;
+            border-right: 5px solid #ff6b6b;
+            border-bottom: 5px solid #ffd700;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
             margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5),
+                        inset 0 0 20px rgba(78, 205, 196, 0.3);
         }
 
         @keyframes spin {
@@ -251,20 +420,43 @@
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         .loading-text {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-bottom: 10px;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(78, 205, 196, 1),
+                             0 0 30px rgba(78, 205, 196, 0.5);
+            }
         }
 
         .loading-subtext {
             font-size: 1rem;
             opacity: 0.8;
+            animation: fadeInOut 2s ease-in-out infinite;
         }
 
-        /* 結果展示 */
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 結果展示增強 */
         .result-section {
             display: none;
             margin-top: 30px;
+            animation: fadeInUp 1s ease-out;
         }
 
         .result-header {
@@ -276,6 +468,13 @@
             font-size: 2rem;
             color: #ffd700;
             margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .result-subtitle {
@@ -283,7 +482,7 @@
             opacity: 0.8;
         }
 
-        /* 標籤頁系統 */
+        /* 標籤頁系統增強 */
         .tabs-container {
             margin-bottom: 30px;
         }
@@ -298,36 +497,65 @@
 
         .tab-button {
             padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 25px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(78, 205, 196, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .tab-button:hover::before {
+            width: 200%;
+            height: 200%;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
         }
 
         .tab-button.active {
             background: rgba(78, 205, 196, 0.3);
             border-color: #4ecdc4;
             color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
         }
 
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* 傳統命盤 */
+        /* 傳統命盤增強 */
         .traditional-chart {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .chart-title {
@@ -335,6 +563,7 @@
             font-size: 1.5rem;
             color: #ffd700;
             margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
 
         .pillars-display {
@@ -346,15 +575,30 @@
 
         .pillar-column {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .pillar-column:nth-child(1) { animation-delay: 0.1s; }
+        .pillar-column:nth-child(2) { animation-delay: 0.2s; }
+        .pillar-column:nth-child(3) { animation-delay: 0.3s; }
+        .pillar-column:nth-child(4) { animation-delay: 0.4s; }
+
+        .pillar-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+            border-color: #4ecdc4;
         }
 
         .pillar-header {
             font-size: 1rem;
             color: #4ecdc4;
             margin-bottom: 10px;
+            text-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
         }
 
         .pillar-stem {
@@ -362,6 +606,13 @@
             font-weight: bold;
             color: #ffd700;
             margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: charGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes charGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 30px rgba(255, 215, 0, 0.5); }
         }
 
         .pillar-branch {
@@ -369,6 +620,8 @@
             font-weight: bold;
             color: #ff6b6b;
             margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            animation: charGlow 2s ease-in-out infinite 0.5s;
         }
 
         .pillar-god {
@@ -388,21 +641,42 @@
 
         .element-stat {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .element-stat:nth-child(1) { animation-delay: 0.5s; }
+        .element-stat:nth-child(2) { animation-delay: 0.6s; }
+        .element-stat:nth-child(3) { animation-delay: 0.7s; }
+        .element-stat:nth-child(4) { animation-delay: 0.8s; }
+        .element-stat:nth-child(5) { animation-delay: 0.9s; }
+
+        .element-stat:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
         }
 
         .element-name {
             font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 5px;
+            text-shadow: 0 0 10px currentColor;
         }
 
         .element-count {
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 5px;
+            animation: numberPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes numberPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .element-percentage {
@@ -410,16 +684,36 @@
             opacity: 0.8;
         }
 
-        /* 日誌系統 */
+        /* 日誌系統增強 */
         .logs-container {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .log-section {
             margin-bottom: 20px;
+            animation: fadeInLeft 0.8s ease-out both;
+        }
+
+        .log-section:nth-child(1) { animation-delay: 0.1s; }
+        .log-section:nth-child(2) { animation-delay: 0.2s; }
+        .log-section:nth-child(3) { animation-delay: 0.3s; }
+        .log-section:nth-child(4) { animation-delay: 0.4s; }
+        .log-section:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .log-title {
@@ -429,15 +723,23 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
         }
 
         .log-item {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 8px;
             font-size: 0.9rem;
             border-left: 3px solid #4ecdc4;
+            transition: all 0.3s ease;
+        }
+
+        .log-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(78, 205, 196, 0.2);
         }
 
         .log-item.warning {
@@ -455,20 +757,29 @@
         }
 
         .spirit-log-item {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
             border-radius: 8px;
             padding: 10px;
             font-size: 0.85rem;
+            transition: all 0.3s ease;
         }
 
-        /* AI故事區域 */
+        .spirit-log-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* AI故事區域增強 */
         .story-container {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .story-title {
@@ -476,12 +787,23 @@
             color: #ffd700;
             margin-bottom: 15px;
             text-align: center;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
 
         .story-content {
             line-height: 1.8;
             font-size: 1rem;
             color: rgba(255, 255, 255, 0.9);
+        }
+
+        .story-content p {
+            margin-bottom: 15px;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .story-content strong {
+            color: #4ecdc4;
+            text-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
         }
 
         .story-loading {
@@ -500,30 +822,140 @@
             margin: 0 auto 15px;
         }
 
+        /* 軍團卡片增強 - 3D翻轉效果 */
         .legions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
+            perspective: 1000px;
+        }
+
+        .legion-card-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+            animation: flyIn 1s ease-out both;
+        }
+
+        .legion-card-wrapper:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        .legion-card-wrapper:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        .legion-card-wrapper:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        .legion-card-wrapper:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes flyIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5) translateY(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .legion-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .legion-card-wrapper.flipped .legion-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .legion-card, .legion-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            overflow-y: auto;
         }
 
         .legion-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
             border-left: 5px solid;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .legion-card-back {
+            transform: rotateY(180deg);
+            border: 2px solid;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .legion-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .legion-card.family { border-left-color: #ffd700; }
-        .legion-card.growth { border-left-color: #32cd32; }
-        .legion-card.self { border-left-color: #4169e1; }
-        .legion-card.future { border-left-color: #ff4500; }
+        .legion-card.family {
+            border-left-color: #ffd700;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+        }
+
+        .legion-card.family:hover {
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        .legion-card-back.family {
+            border-color: #ffd700;
+        }
+
+        .legion-card.growth {
+            border-left-color: #32cd32;
+            box-shadow: 0 8px 32px rgba(50, 205, 50, 0.2);
+        }
+
+        .legion-card.growth:hover {
+            box-shadow: 0 15px 40px rgba(50, 205, 50, 0.4);
+        }
+
+        .legion-card-back.growth {
+            border-color: #32cd32;
+        }
+
+        .legion-card.self {
+            border-left-color: #4169e1;
+            box-shadow: 0 8px 32px rgba(65, 105, 225, 0.2);
+        }
+
+        .legion-card.self:hover {
+            box-shadow: 0 15px 40px rgba(65, 105, 225, 0.4);
+        }
+
+        .legion-card-back.self {
+            border-color: #4169e1;
+        }
+
+        .legion-card.future {
+            border-left-color: #ff4500;
+            box-shadow: 0 8px 32px rgba(255, 69, 0, 0.2);
+        }
+
+        .legion-card.future:hover {
+            box-shadow: 0 15px 40px rgba(255, 69, 0, 0.4);
+        }
+
+        .legion-card-back.future {
+            border-color: #ff4500;
+        }
 
         .legion-header {
             display: flex;
@@ -535,6 +967,7 @@
         .legion-title {
             font-size: 1.3rem;
             font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .legion-pillar {
@@ -542,6 +975,7 @@
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 0.9rem;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
         }
 
         .roles-section {
@@ -550,11 +984,34 @@
 
         .role {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             padding: 8px 12px;
             border-radius: 20px;
             margin: 5px;
             font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: floatIn 0.6s ease-out both;
+        }
+
+        .role:nth-child(1) { animation-delay: 0.1s; }
+        .role:nth-child(2) { animation-delay: 0.2s; }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .role:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
         .buffs-section {
@@ -565,6 +1022,7 @@
             font-size: 1rem;
             color: #32cd32;
             margin-bottom: 5px;
+            text-shadow: 0 0 5px rgba(50, 205, 50, 0.5);
         }
 
         .buff-list {
@@ -580,20 +1038,48 @@
             font-size: 1rem;
             color: #ffd700;
             margin-bottom: 8px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
 
         .sigil {
             display: inline-block;
-            background: rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.2);
             padding: 5px 10px;
             border-radius: 15px;
             margin: 3px;
             font-size: 0.8rem;
             border: 1px solid rgba(255, 215, 0, 0.5);
+            transition: all 0.3s ease;
+            animation: sigilFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes sigilFloat {
+            0%, 100% {
+                transform: translateY(0);
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+            }
+            50% {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+            }
+        }
+
+        .sigil:hover {
+            background: rgba(255, 215, 0, 0.4);
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .flip-hint {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .reset-button {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 12px 25px;
@@ -604,8 +1090,10 @@
         }
 
         .reset-button:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
         }
 
         /* 響應式設計 */
@@ -625,6 +1113,14 @@
             .legions-grid {
                 grid-template-columns: 1fr;
             }
+
+            .pillars-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .elements-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -635,9 +1131,10 @@
     <!-- 載入覆蓋層 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
+            <div class="nebula-container" id="nebulaContainer"></div>
             <div class="loading-spinner"></div>
             <div class="loading-text">星雲能量聚合中...</div>
-            <div class="loading-subtext">正在計算您的四柱八字，分析四時軍團，生成神煞兵符...</div>
+            <div class="loading-subtext">正在計算您的四柱八字,分析四時軍團,生成神煞兵符...</div>
         </div>
     </div>
 
@@ -652,7 +1149,7 @@
         <!-- 表單區域 -->
         <div class="form-section" id="formSection">
             <h2 class="form-title">⚔️ 軍團召喚儀式</h2>
-            <p style="margin-bottom: 20px; opacity: 0.8;">請提供您的基本資訊，啟動四時軍團分析</p>
+            <p style="margin-bottom: 20px; opacity: 0.8;">請提供您的基本資訊,啟動四時軍團分析</p>
 
             <form id="baziForm">
                 <div class="form-grid">
@@ -683,7 +1180,7 @@
                 <div class="form-group">
                     <label class="form-label">子時換日策略</label>
                     <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">
-                        子時 (23:00-00:59) 橫跨兩個曆日，需選擇計算方式
+                        子時 (23:00-00:59) 橫跨兩個曆日,需選擇計算方式
                     </p>
                     <div class="midnight-options">
                         <div class="midnight-option selected" data-value="traditional">
@@ -697,7 +1194,7 @@
                             <input type="radio" name="midnightRule" value="modern">
                             <div>
                                 <div>現代派區分</div>
-                                <div class="midnight-description">晚子23:00-23:59當日，早子00:00-00:59翌日</div>
+                                <div class="midnight-description">晚子23:00-23:59當日,早子00:00-00:59翌日</div>
                             </div>
                         </div>
                     </div>
@@ -772,44 +1269,12 @@
         </div>
     </div>
 
+    <!-- 引入外部配置和轉換器 -->
+    <script src="frontend-config.js"></script>
+    <script src="honglin-bazi-transformer.js"></script>
+    
     <script>
-        // 故事版軍團轉換器
-        const HEAVENLY_STEMS_COMMANDERS = {
-            '甲': { name: '森林統帥', rpg_class: '先鋒者', buff: ['開拓進取', '勇往直前'], debuff: ['急躁冒進', '缺乏耐性'] },
-            '乙': { name: '花草軍師', rpg_class: '協調者', buff: ['靈活應變', '溫和包容'], debuff: ['優柔寡斷', '過度依賴'] },
-            '丙': { name: '烈日戰神', rpg_class: '激勵者', buff: ['熱情感召', '光明正大'], debuff: ['急躁易怒', '過度張揚'] },
-            '丁': { name: '燭光法師', rpg_class: '智慧者', buff: ['細膩洞察', '溫暖人心'], debuff: ['過度敏感', '情緒波動'] },
-            '戊': { name: '山岳守護', rpg_class: '防禦者', buff: ['穩定承擔', '厚德載物'], debuff: ['固執僵化', '變通不足'] },
-            '己': { name: '田園管家', rpg_class: '支援者', buff: ['細心照料', '默默奉獻'], debuff: ['過度操心', '自我懷疑'] },
-            '庚': { name: '鋼鐵騎士', rpg_class: '執行者', buff: ['果斷決策', '堅毅不屈'], debuff: ['剛硬無情', '缺乏彈性'] },
-            '辛': { name: '珠寶工匠', rpg_class: '精煉者', buff: ['精緻品味', '追求完美'], debuff: ['挑剔完美', '過度敏感'] },
-            '壬': { name: '江河船長', rpg_class: '流動顧問', buff: ['靈活創新', '包容萬物'], debuff: ['善變無定', '缺乏原則'] },
-            '癸': { name: '甘露使者', rpg_class: '滋養者', buff: ['溫柔包容', '潤物無聲'], debuff: ['過度依賴', '缺乏主見'] }
-        };
-
-        const EARTHLY_BRANCHES_STRATEGISTS = {
-            '子': { name: '智慧鼠師', buff: ['機敏謀略', '靈活變通'], debuff: ['過度算計', '缺乏信任'] },
-            '丑': { name: '忠犬守衛', buff: ['後勤補給', '忠誠可靠'], debuff: ['遲疑不決', '過度保守'] },
-            '寅': { name: '森林獵人', buff: ['先鋒衝陣', '勇猛無畏'], debuff: ['草率行事', '缺乏深思'] },
-            '卯': { name: '春兔信使', buff: ['靈活傳訊', '生機勃勃'], debuff: ['缺乏耐性', '三分鐘熱度'] },
-            '辰': { name: '龍族長老', buff: ['威嚴統御', '高瞻遠矚'], debuff: ['高傲孤立', '脫離實際'] },
-            '巳': { name: '智蛇謀士', buff: ['深謀遠慮', '洞察人心'], debuff: ['過度猜疑', '心機太重'] },
-            '午': { name: '烈馬先鋒', buff: ['衝鋒陷陣', '熱情奔放'], debuff: ['衝動魯莽', '缺乏持久'] },
-            '未': { name: '溫羊牧者', buff: ['和諧協調', '溫和善良'], debuff: ['優柔寡斷', '缺乏決斷'] },
-            '申': { name: '靈猴軍師', buff: ['機智變通', '創意無限'], debuff: ['三心二意', '不夠專注'] },
-            '酉': { name: '金雞報曉', buff: ['準時執行', '一絲不苟'], debuff: ['過度挑剔', '缺乏包容'] },
-            '戌': { name: '戰犬統領', buff: ['守護堡壘', '忠誠護主'], debuff: ['迂腐頑固', '缺乏變通'] },
-            '亥': { name: '野豬勇士', buff: ['勇猛直前', '純真善良'], debuff: ['缺乏策略', '容易受騙'] }
-        };
-
-        const LEGION_TYPES = {
-            year: { name: '家族兵團', description: '血脈傳承，根基所在', cssClass: 'family', icon: '🏰' },
-            month: { name: '成長兵團', description: '學習歷程，能力養成', cssClass: 'growth', icon: '🌱' },
-            day: { name: '本我兵團', description: '核心自我，真實本性', cssClass: 'self', icon: '⭐' },
-            hour: { name: '未來兵團', description: '發展方向，潛能展現', cssClass: 'future', icon: '🚀' }
-        };
-
-        // 初始化星空背景
+        // 創建星空背景
         function createStars() {
             const starsContainer = document.getElementById('stars');
             const starCount = 100;
@@ -817,188 +1282,151 @@
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
+                
+                // 隨機大小
+                const sizes = ['small', 'medium', 'large'];
+                star.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+                
+                // 隨機位置
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
+                
+                // 隨機動畫延遲
                 star.style.animationDelay = Math.random() * 3 + 's';
+                
                 starsContainer.appendChild(star);
             }
         }
 
-        // 表單事件處理
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
+        // 創建星雲粒子效果
+        function createNebulaParticles() {
+            const nebulaContainer = document.getElementById('nebulaContainer');
+            const particleCount = 30;
             
-            // 性別選擇
-            document.querySelectorAll('.gender-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'nebula-particle';
+                
+                // 隨機大小
+                const size = Math.random() * 20 + 10;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // 隨機顏色
+                const colors = ['#4ecdc4', '#ff6b6b', '#ffd700', '#45b7d1', '#ff4500'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.filter = 'blur(8px)';
+                
+                // 隨機位置和移動
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                // 隨機動畫延遲
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                
+                nebulaContainer.appendChild(particle);
+            }
+        }
 
-            // 子時換日策略選擇
-            document.querySelectorAll('.midnight-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.midnight-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    this.querySelector('input[type="radio"]').checked = true;
-                });
-            });
+        // 初始化
+        createStars();
+        createNebulaParticles();
 
-            // 表單提交
-            document.getElementById('baziForm').addEventListener('submit', handleFormSubmit);
+        // 性別選擇
+        document.querySelectorAll('.gender-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
         });
 
-        async function handleFormSubmit(event) {
-            event.preventDefault();
+        // 子時策略選擇
+        document.querySelectorAll('.midnight-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.midnight-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // 表單提交
+        document.getElementById('baziForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            const formData = collectFormData();
-            if (!validateFormData(formData)) {
+            // 驗證性別選擇
+            const selectedGender = document.querySelector('.gender-option.selected');
+            if (!selectedGender) {
+                alert('請選擇性別');
                 return;
             }
-
-            showLoading();
+            
+            // 顯示載入動畫
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // 收集表單數據
+            const formData = {
+                name: document.getElementById('name').value,
+                gender: selectedGender.dataset.value,
+                birth_date: document.getElementById('birthDate').value,
+                birth_time: document.getElementById('birthTime').value,
+                zishi_method: document.querySelector('input[name="midnightRule"]:checked').value,
+                timezone: HongLingConfig.defaults.timezone,
+                longitude: HongLingConfig.defaults.longitude,
+                use_true_solar_time: HongLingConfig.defaults.useTrueSolarTime
+            };
             
             try {
-                const apiResult = await callBaziApi(formData);
-                const storyResult = convertToStoryLegions(apiResult);
-                displayResults(formData.name, storyResult, apiResult);
+                // 調用API
+                const response = await fetch(HongLingConfig.api.fullUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API請求失敗');
+                }
+                
+                const apiResult = await response.json();
+                
+                // 轉換為故事版格式
+                const transformer = new HongLingBaziTransformer();
+                const storyResult = transformer.transform(apiResult);
+                
+                // 顯示結果
+                displayResults(formData.name, apiResult, storyResult);
+                
             } catch (error) {
-                hideLoading();
-                alert('分析失敗：' + error.message);
+                console.error('錯誤:', error);
+                alert('分析失敗,請稍後再試');
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
             }
-        }
+        });
 
-        function collectFormData() {
-            const selectedGender = document.querySelector('.gender-option.selected');
-            const selectedMidnight = document.querySelector('.midnight-option.selected input[type="radio"]');
-            
-            return {
-                name: document.getElementById('name').value,
-                gender: selectedGender ? selectedGender.dataset.value : '',
-                birthDate: document.getElementById('birthDate').value,
-                birthTime: document.getElementById('birthTime').value,
-                midnightRule: selectedMidnight ? selectedMidnight.value : 'traditional'
-            };
-        }
-
-        function validateFormData(data) {
-            if (!data.name || !data.gender || !data.birthDate || !data.birthTime) {
-                alert('請填寫所有必要資訊');
-                return false;
-            }
-            return true;
-        }
-
-        async function callBaziApi(formData) {
-            const requestData = {
-                datetime_local: `${formData.birthDate}T${formData.birthTime}:00`,
-                timezone: "Asia/Taipei",
-                longitude: 120.0,
-                use_true_solar_time: false
-            };
-
-            const response = await fetch('https://rainbow-sanctuary-bazu-production.up.railway.app/api/bazi/compute', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API錯誤: ${response.status}`);
-            }
-
-            return await response.json();
-        }
-
-        function convertToStoryLegions(apiResult) {
-            const { four_pillars, ten_gods, spirits } = apiResult.data;
-            
-            const legions = [
-                buildLegion('year', four_pillars.year, spirits),
-                buildLegion('month', four_pillars.month, spirits),
-                buildLegion('day', four_pillars.day, spirits),
-                buildLegion('hour', four_pillars.hour, spirits)
-            ];
-
-            return { 
-                legions, 
-                meta: { 
-                    pillar_string: `${four_pillars.year.stem}${four_pillars.year.branch} ${four_pillars.month.stem}${four_pillars.month.branch} ${four_pillars.day.stem}${four_pillars.day.branch} ${four_pillars.hour.stem}${four_pillars.hour.branch}`,
-                    ten_gods: ten_gods
-                } 
-            };
-        }
-
-        function buildLegion(pillarType, pillar, spirits) {
-            const legionInfo = LEGION_TYPES[pillarType];
-            const commander = HEAVENLY_STEMS_COMMANDERS[pillar.stem] || { name: '未知主將', rpg_class: '神秘者', buff: [], debuff: [] };
-            const strategist = EARTHLY_BRANCHES_STRATEGISTS[pillar.branch] || { name: '未知軍師', buff: [], debuff: [] };
-            
-            return {
-                type: legionInfo.name,
-                description: legionInfo.description,
-                cssClass: legionInfo.cssClass,
-                icon: legionInfo.icon,
-                pillar: { stem: pillar.stem, branch: pillar.branch },
-                commander: { 
-                    code: pillar.stem, 
-                    name: commander.name, 
-                    rpg_class: commander.rpg_class, 
-                    buff: commander.buff, 
-                    debuff: commander.debuff 
-                },
-                strategist: { 
-                    code: pillar.branch, 
-                    name: strategist.name, 
-                    buff: strategist.buff, 
-                    debuff: strategist.debuff 
-                },
-                sigils: spirits.slice(0, 3).map(spirit => ({ 
-                    name: spirit.name, 
-                    category: spirit.category 
-                }))
-            };
-        }
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
-
-        function displayResults(userName, storyResult, apiResult) {
-            hideLoading();
-            
+        function displayResults(userName, apiResult, storyResult) {
+            // 隱藏表單,顯示結果
             document.getElementById('formSection').style.display = 'none';
             document.getElementById('resultSection').style.display = 'block';
             
+            // 設置副標題
             document.getElementById('resultSubtitle').textContent = 
-                `${userName} 的命運分析 · 四柱：${storyResult.meta.pillar_string}`;
+                `${userName} 的命運軍團已集結完畢`;
             
-            // 顯示傳統命盤
+            // 顯示各個部分
             displayTraditionalChart(apiResult);
-            
-            // 顯示軍團戰報
             displayLegions(storyResult);
-            
-            // 顯示計算日誌
             displayLogs(apiResult);
-            
-            // 生成AI故事
             generateAIStory(userName, storyResult, apiResult);
         }
 
         function displayTraditionalChart(apiResult) {
-            const { four_pillars, ten_gods, five_elements } = apiResult.data || {};
-            
-            // 檢查必要資料
-            if (!four_pillars || !ten_gods) {
-                console.error('API 資料不完整', apiResult);
-                return;
-            }
+            const { four_pillars } = apiResult.data;
+            const ten_gods = apiResult.data.ten_gods_analysis || {};
             
             // 四柱顯示
             const pillarsDisplay = document.getElementById('pillarsDisplay');
@@ -1029,7 +1457,6 @@
                 '水': '#4169e1'
             };
             
-            // API 回傳的結構是 five_elements_stats.elements_count 和 elements_percentage
             const elementsCount = apiResult.data.five_elements_stats?.elements_count || {};
             const elementsPercentage = apiResult.data.five_elements_stats?.elements_percentage || {};
             
@@ -1049,34 +1476,86 @@
         function displayLegions(storyResult) {
             const legionsGrid = document.getElementById('legionsGrid');
             legionsGrid.innerHTML = storyResult.legions.map(legion => `
-                <div class="legion-card ${legion.cssClass}">
-                    <div class="legion-header">
-                        <span style="font-size: 1.5rem;">${legion.icon}</span>
-                        <div>
-                            <div class="legion-title">${legion.type}</div>
-                            <div style="font-size: 0.9rem; opacity: 0.8;">${legion.description}</div>
+                <div class="legion-card-wrapper ${legion.cssClass}">
+                    <div class="legion-card-inner">
+                        <!-- 正面 -->
+                        <div class="legion-card ${legion.cssClass}">
+                            <div class="legion-header">
+                                <span style="font-size: 1.5rem;">${legion.icon}</span>
+                                <div>
+                                    <div class="legion-title">${legion.type}</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.8;">${legion.description}</div>
+                                </div>
+                                <div class="legion-pillar">${legion.pillar.stem}${legion.pillar.branch}</div>
+                            </div>
+                            
+                            <div class="roles-section">
+                                <span class="role">👑 主將: ${legion.commander.name} (${legion.commander.rpg_class})</span>
+                                <span class="role">🎯 軍師: ${legion.strategist.name}</span>
+                            </div>
+                            
+                            <div class="buffs-section">
+                                <div class="buff-title">✨ 軍團優勢</div>
+                                <div class="buff-list">${[...legion.commander.buff, ...legion.strategist.buff].join(' · ')}</div>
+                            </div>
+                            
+                            ${legion.sigils.length > 0 ? `
+                            <div class="sigils-section">
+                                <div class="sigil-title">🎴 兵符卡</div>
+                                <div>${legion.sigils.map(sigil => `<span class="sigil">${sigil.name}</span>`).join('')}</div>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="flip-hint">💫 點擊翻轉查看詳情</div>
                         </div>
-                        <div class="legion-pillar">${legion.pillar.stem}${legion.pillar.branch}</div>
+                        
+                        <!-- 背面 -->
+                        <div class="legion-card-back ${legion.cssClass}">
+                            <div class="legion-header">
+                                <span style="font-size: 1.5rem;">${legion.icon}</span>
+                                <div>
+                                    <div class="legion-title">${legion.type} - 詳細資訊</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-size: 1rem; color: #4ecdc4; margin-bottom: 5px;">🏰 戰場環境</div>
+                                <div style="font-size: 0.9rem;">${legion.battlefield.scene}</div>
+                                <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">
+                                    優勢: ${legion.battlefield.buff.join(', ')}<br>
+                                    挑戰: ${legion.battlefield.debuff.join(', ')}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-size: 1rem; color: #ffd700; margin-bottom: 5px;">💡 人生智慧</div>
+                                <div style="font-size: 0.9rem; font-style: italic;">${legion.battlefield.lesson}</div>
+                            </div>
+                            
+                            ${legion.sigils.length > 0 ? `
+                            <div>
+                                <div style="font-size: 1rem; color: #ff6b6b; margin-bottom: 5px;">🎴 神煞兵符詳解</div>
+                                ${legion.sigils.map(sigil => `
+                                    <div style="background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 8px; margin-bottom: 5px; font-size: 0.85rem;">
+                                        <strong>${sigil.name}</strong> (${sigil.category})<br>
+                                        <span style="opacity: 0.8;">${sigil.description || '神秘力量加持'}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ` : ''}
+                            
+                            <div class="flip-hint">💫 點擊返回</div>
+                        </div>
                     </div>
-                    
-                    <div class="roles-section">
-                        <span class="role">👑 主將: ${legion.commander.name} (${legion.commander.rpg_class})</span>
-                        <span class="role">🎯 軍師: ${legion.strategist.name}</span>
-                    </div>
-                    
-                    <div class="buffs-section">
-                        <div class="buff-title">✨ 軍團優勢</div>
-                        <div class="buff-list">${[...legion.commander.buff, ...legion.strategist.buff].join(' · ')}</div>
-                    </div>
-                    
-                    ${legion.sigils.length > 0 ? `
-                    <div class="sigils-section">
-                        <div class="sigil-title">🎴 兵符卡</div>
-                        <div>${legion.sigils.map(sigil => `<span class="sigil">${sigil.name}</span>`).join('')}</div>
-                    </div>
-                    ` : ''}
                 </div>
             `).join('');
+            
+            // 添加翻轉事件
+            document.querySelectorAll('.legion-card-wrapper').forEach(wrapper => {
+                wrapper.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                });
+            });
         }
 
         function displayLogs(apiResult) {
@@ -1098,7 +1577,7 @@
                     <div class="log-title">📅 節氣定位</div>
                     <div class="log-item">當前節氣: ${solar_terms?.current || '未知'}</div>
                     <div class="log-item">下個節氣: ${solar_terms?.next || '未知'}</div>
-                    <div class="log-item info">月柱計算基於節氣邊界，確保準確性</div>
+                    <div class="log-item info">月柱計算基於節氣邊界,確保準確性</div>
                 </div>
 
                 <div class="log-section">
@@ -1136,18 +1615,14 @@
             const storyContent = document.getElementById('storyContent');
             
             try {
-                // 構建AI提示詞
                 const prompt = buildStoryPrompt(userName, storyResult, apiResult);
-                
-                // 調用OpenAI API生成故事
                 const story = await callOpenAI(prompt);
-                
                 storyContent.innerHTML = `<div class="story-content">${story}</div>`;
             } catch (error) {
                 storyContent.innerHTML = `
                     <div class="story-content" style="color: #ff6b6b;">
-                        <p>抱歉，AI故事生成遇到問題：${error.message}</p>
-                        <p>但您的軍團分析已完成，請查看其他標籤頁的詳細資訊。</p>
+                        <p>抱歉,AI故事生成遇到問題:${error.message}</p>
+                        <p>但您的軍團分析已完成,請查看其他標籤頁的詳細資訊。</p>
                     </div>
                 `;
             }
@@ -1157,46 +1632,50 @@
             const { four_pillars, spirits } = apiResult.data;
             const legions = storyResult.legions;
             
-            return `請為${userName}創作一個獨特的八字軍團故事，基於以下資訊：
+            return `請為${userName}創作一個獨特的八字軍團故事,基於以下資訊:
 
-四柱：${storyResult.meta.pillar_string}
+四柱:${storyResult.meta.pillar_string}
 
-四時軍團：
-${legions.map(legion => `- ${legion.type}：由${legion.commander.name}(${legion.commander.rpg_class})統領，${legion.strategist.name}輔佐`).join('\n')}
+四時軍團:
+${legions.map(legion => `- ${legion.type}:由${legion.commander.name}(${legion.commander.rpg_class})統領,${legion.strategist.name}輔佐`).join('\n')}
 
-神煞兵符：${spirits.map(s => s.name).join('、')}
+神煞兵符:${spirits.map(s => s.name).join('、')}
 
-請創作一個800字左右的故事，包含：
-1. 開場：描述${userName}的命運軍團覺醒
+請創作一個800字左右的故事,包含:
+1. 開場:描述${userName}的命運軍團覺醒
 2. 四時軍團的特色和互動
 3. 神煞兵符的神秘力量
 4. 人生建議和未來展望
 
-風格要求：
-- 奇幻RPG風格，充滿想像力
-- 正面積極，給人希望
+風格要求:
+- 奇幻RPG風格,充滿想像力
+- 正面積極,給人希望
 - 結合中國傳統文化元素
-- 語言優美，富有詩意`;
+- 語言優美,富有詩意`;
         }
 
         async function callOpenAI(prompt) {
-            // 模擬AI故事生成（實際部署時需要後端API支援）
+            // 模擬AI故事生成
             return new Promise((resolve) => {
                 setTimeout(() => {
                     resolve(`
-                        <p>在虹靈御所的星空之下，${document.getElementById('name').value}的命運軍團正式覺醒...</p>
+                        <p>在虹靈御所的星空之下,${document.getElementById('name').value}的命運軍團正式覺醒...</p>
                         
-                        <p>🏰 <strong>家族兵團</strong>率先響應召喚，${document.querySelector('#legionsGrid .family .legion-title') ? '由經驗豐富的統領帶領' : ''}，承載著血脈傳承的使命，為整個軍團提供穩固的根基。</p>
+                        <p>🏰 <strong>家族兵團</strong>率先響應召喚,承載著血脈傳承的使命,為整個軍團提供穩固的根基。統領以豐富的經驗和深厚的智慧,引導著軍團走向光明的未來。</p>
                         
-                        <p>🌱 <strong>成長兵團</strong>緊隨其後，充滿朝氣與活力，代表著不斷學習與進步的精神，為軍團注入源源不絕的創新力量。</p>
+                        <p>🌱 <strong>成長兵團</strong>緊隨其後,充滿朝氣與活力,代表著不斷學習與進步的精神。他們如同春天的新芽,為軍團注入源源不絕的創新力量,讓整個團隊保持著旺盛的生命力。</p>
                         
-                        <p>⭐ <strong>本我兵團</strong>展現真實的內在力量，這是最核心的戰鬥單位，體現著純粹的自我本質與獨特的個人魅力。</p>
+                        <p>⭐ <strong>本我兵團</strong>展現真實的內在力量,這是最核心的戰鬥單位。他們體現著純粹的自我本質與獨特的個人魅力,是整個軍團的靈魂所在,散發著無可替代的光芒。</p>
                         
-                        <p>🚀 <strong>未來兵團</strong>指向無限可能，如同夜空中最亮的星，照亮前進的道路，預示著美好的發展前景。</p>
+                        <p>🚀 <strong>未來兵團</strong>指向無限可能,如同夜空中最亮的星,照亮前進的道路。他們預示著美好的發展前景,為軍團開拓著嶄新的領域,創造著無限的機遇。</p>
                         
-                        <p>四時軍團在神煞兵符的加持下，形成了完美的戰略平衡。每一個兵符都蘊含著古老的智慧，為軍團提供獨特的能力加成。</p>
+                        <p>四時軍團在神煞兵符的加持下,形成了完美的戰略平衡。每一個兵符都蘊含著古老的智慧,為軍團提供獨特的能力加成。吉神帶來好運與機遇,凶煞提醒警惕與挑戰,桃花增添魅力與人緣。</p>
                         
-                        <p>在這個充滿挑戰與機遇的人生戰場上，您的軍團將以智慧為劍，以勇氣為盾，書寫屬於自己的傳奇篇章。記住，真正的力量來自於內心的平衡與和諧，願您的軍團永遠光明璀璨！</p>
+                        <p>在各個戰場上,軍團展現出非凡的適應能力。無論是深海遺跡的沉穩,熔鑄工坊的專注,還是原始森林的堅韌,每一個環境都成為軍團成長的養分。</p>
+                        
+                        <p>在這個充滿挑戰與機遇的人生戰場上,您的軍團將以智慧為劍,以勇氣為盾,書寫屬於自己的傳奇篇章。記住,真正的力量來自於內心的平衡與和諧,願您的軍團永遠光明璀璨!</p>
+                        
+                        <p>✨ <strong>人生建議</strong>:保持四時軍團的平衡發展,既要尊重家族傳承,也要勇於創新突破;既要認識真實的自我,也要展望美好的未來。在神煞兵符的指引下,把握機遇,化解挑戰,讓生命綻放最璀璨的光芒!</p>
                     `);
                 }, 3000);
             });
@@ -1226,3 +1705,4 @@ ${legions.map(legion => `- ${legion.type}：由${legion.commander.name}(${legion
     </script>
 </body>
 </html>
+
